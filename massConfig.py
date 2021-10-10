@@ -1,13 +1,14 @@
 import pexpect
 import re
 import sys
+import getpass
 
 
-def login():		#	Функция авторизации
+def login(username, password):		#	Функция авторизации
     sw.expect(['ame:', 'ogin:'])
-    sw.sendline(' ')		#	Логин
+    sw.sendline(username)		#	Логин
     sw.expect('ord:')
-    sw.sendline(' ')		#	Пароль
+    sw.sendline(password)		#	Пароль
     
 def inputCMD(file):		#	Функция выполнения команд из файла и контроль команды save
     for line in open(file, "r"):
@@ -37,6 +38,11 @@ modelDict = {		#	Словарь соответсвия моделей D-Link о�
 }
 errConnect = open('unreachSW.txt', 'w') 	#	Файл для сохранения неудачных коннектов
 
+#   Запрос данных авторизации у оператора
+
+username = input('Username: ')
+password = getpass.getpass('Password: ')
+
 for line in open("ipadd.txt", "r"):		#	Цикл перебора айпишников из файла
     try:
         sw = pexpect.spawn('telnet ' + line.rstrip('\n'))
@@ -48,27 +54,27 @@ for line in open("ipadd.txt", "r"):		#	Цикл перебора айпишни�
 #	Загрузка файла с командами в зависимости от числа портов
 
         if portsLimit == 6:
-            login()
+            login(username, password)
             inputCMD('6ports.txt')
             sw.sendline("logout\r")
             sw.expect('Connection closed')
         elif portsLimit == 10:
-            login()
+            login(username, password)
             inputCMD('10ports.txt')
             sw.sendline("logout\r")
             sw.expect('Connection closed')
         elif portsLimit == 26:
-            login()
+            login(username, password)
             inputCMD('26ports.txt')
             sw.sendline("logout\r")
             sw.expect('Connection closed')
         elif portsLimit == 28:
-            login()
+            login(username, password)
             inputCMD('28ports.txt')
             sw.sendline("logout\r")
             sw.expect('Connection closed')
         elif portsLimit == 52:
-            login()
+            login(username, password)
             inputCMD('52ports.txt')
             sw.sendline("logout\r")
             sw.expect('Connection closed')
@@ -76,7 +82,7 @@ for line in open("ipadd.txt", "r"):		#	Цикл перебора айпишни�
 #	Обработка ошибки отсутствия ключа в словаре (значит это Huawei)
 
     except KeyError:
-        login()
+        login(username, password)
         sw.sendline('disp vers')
         huaweiType = sw.expect(['S2326','S2352'])
         if huaweiType == 0:
