@@ -1,0 +1,4 @@
+dis cli
+sh sw
+en cli
+save
